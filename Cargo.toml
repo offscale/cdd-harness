@@ -12,3 +12,4 @@ serde_json = "1.0"
 cdd = { path = "../cdd-core" }
 failure = "0.1.6"
 ws = "0.9.1"
+websocket = "0.24.0"
