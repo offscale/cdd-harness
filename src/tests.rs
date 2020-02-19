@@ -1,10 +1,13 @@
+#![allow(dead_code)]
+#![allow(unused_imports)]
+
 use crate::rpc;
 
 const RUST_SERVER: &str = "ws://127.0.0.1:7779";
 
 #[test]
 fn test_parse_rust_empty() {
-    let response = rpc::rpc_request(RUST_SERVER, "");
+    let response = rpc::rpc_request(RUST_SERVER, "parse", "");
     assert_eq!(
         response.unwrap(),
         rpc::RPCResponse {
@@ -20,7 +23,7 @@ fn test_parse_rust_empty() {
 
 #[test]
 fn test_parse_rust_valid() {
-    let response = rpc::rpc_request(RUST_SERVER, "var a=5;");
+    let response = rpc::rpc_request(RUST_SERVER, "parse", "var a=5;");
 
     assert_eq!(
         response.unwrap(),
