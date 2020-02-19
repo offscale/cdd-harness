@@ -1,21 +1,18 @@
 use cdd::*;
 
 /// Perform an RPC socket request
-pub fn request(host: &str, request: &str) -> Result<String, ws::Error> {
+pub fn request(host: &str, request: &str) -> Result<String, Box<dyn std::error::Error>> {
     use websocket::{ClientBuilder, Message};
 
-    let mut client = ClientBuilder::new(host)
-        .unwrap()
-        .connect_insecure()
-        .unwrap();
+    let mut client = ClientBuilder::new(host)?.connect_insecure()?;
+    client.send_message(&Message::text(request))?; // Send message
 
-    client.send_message(&Message::text(request)).unwrap(); // Send message
-
-    if let websocket::OwnedMessage::Text(response) = client.recv_message().unwrap() {
+    if let websocket::OwnedMessage::Text(response) = client.recv_message()? {
         println!("response -> {:?}", response);
         Ok(response)
     } else {
-        Ok("".into())
+        // todo: Err here
+        Ok("{}".into())
     }
 }
 
