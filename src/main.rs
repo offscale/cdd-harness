@@ -28,7 +28,14 @@ pub fn main() {
             name: "Pet".into(),
             vars: vec![],
         }],
-        requests: vec![],
+        requests: vec![cdd::Request {
+            name: "listPets".into(),
+            path: "/pets".into(),
+            params: vec![],
+            method: cdd::Method::Get,
+            response_type: "".into(),
+            error_type: "".into(),
+        }],
     };
 
     println!(
