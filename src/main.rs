@@ -1,3 +1,4 @@
+mod methods;
 mod rpc;
 mod tests;
 
@@ -30,5 +31,8 @@ pub fn main() {
         requests: vec![],
     };
 
-    println!("--> {:?}", rpc::update("ws://127.0.0.1:7779", "", project));
+    println!(
+        "--> {:?}",
+        methods::update("ws://127.0.0.1:7779", "", project)
+    );
 }

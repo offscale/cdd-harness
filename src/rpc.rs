@@ -1,31 +1,10 @@
-use cdd::*;
 use serde::{Deserialize, Serialize};
 
-pub fn parse(
-    host: &str,
-    code: &str,
-) -> Result<RPCResponse<ParseResult>, Box<dyn std::error::Error>> {
-    Ok(serde_json::from_str(&rpc_request(
-        host,
-        "parse",
-        serde_json::json!({ "code": code }),
-    )?)?)
-}
-
-pub fn update(
-    host: &str,
-    code: &str,
-    project: Project,
-) -> Result<RPCResponse<UpdateResult>, Box<dyn std::error::Error>> {
-    Ok(serde_json::from_str(&rpc_request(
-        host,
-        "update",
-        serde_json::json!({ "code": code, "project": project }),
-    )?)?)
-}
-
 /// Perform an RPC socket request
-fn socket_request(host: &str, request: &str) -> Result<String, Box<dyn std::error::Error>> {
+pub(crate) fn socket_request(
+    host: &str,
+    request: &str,
+) -> Result<String, Box<dyn std::error::Error>> {
     use websocket::{ClientBuilder, Message};
 
     println!("request -> {}", request);
@@ -42,7 +21,7 @@ fn socket_request(host: &str, request: &str) -> Result<String, Box<dyn std::erro
     }
 }
 
-fn rpc_request(
+pub(crate) fn rpc_request(
     host: &str,
     method: &str,
     params: serde_json::Value,
@@ -55,24 +34,11 @@ fn rpc_request(
     })
     .to_string();
 
-    let json_response = socket_request(host, &json_request)?;
-    // let response = serde_json::from_str(&json_response)?;
-    Ok(json_response)
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct ParseResult {
-    pub project: Project,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct UpdateResult {
-    pub code: String,
-    pub project: Project,
+    socket_request(host, &json_request)
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-pub struct RPCResponse<T> {
+pub(crate) struct RPCResponse<T> {
     pub jsonrpc: String,
     pub id: Option<String>,
     pub error: Option<RPCErrorCode>,
@@ -80,9 +46,7 @@ pub struct RPCResponse<T> {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-pub struct RPCErrorCode {
+pub(crate) struct RPCErrorCode {
     pub code: i32,
     pub message: String,
 }
-
-// pub fn parse(host: &str, code: &str) -> Result<Project, Box<dyn std::error::Error>> {}
