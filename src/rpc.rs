@@ -1,20 +1,27 @@
 use cdd::*;
 use serde::{Deserialize, Serialize};
 
-pub fn parse(host: &str, code: &str) -> Result<RPCResponse, Box<dyn std::error::Error>> {
-    rpc_request(host, "parse", serde_json::json!({ "code": code }))
+pub fn parse(
+    host: &str,
+    code: &str,
+) -> Result<RPCResponse<ParseResult>, Box<dyn std::error::Error>> {
+    Ok(serde_json::from_str(&rpc_request(
+        host,
+        "parse",
+        serde_json::json!({ "code": code }),
+    )?)?)
 }
 
 pub fn update(
     host: &str,
     code: &str,
     project: Project,
-) -> Result<RPCResponse, Box<dyn std::error::Error>> {
-    rpc_request(
+) -> Result<RPCResponse<UpdateResult>, Box<dyn std::error::Error>> {
+    Ok(serde_json::from_str(&rpc_request(
         host,
         "update",
         serde_json::json!({ "code": code, "project": project }),
-    )
+    )?)?)
 }
 
 /// Perform an RPC socket request
@@ -39,7 +46,7 @@ fn rpc_request(
     host: &str,
     method: &str,
     params: serde_json::Value,
-) -> Result<RPCResponse, Box<dyn std::error::Error>> {
+) -> Result<String, Box<dyn std::error::Error>> {
     let json_request = serde_json::json!({
         "jsonrpc": "2.0",
         "method": method,
@@ -49,15 +56,27 @@ fn rpc_request(
     .to_string();
 
     let json_response = socket_request(host, &json_request)?;
-    let response: RPCResponse = serde_json::from_str(&json_response)?;
-    Ok(response)
+    // let response = serde_json::from_str(&json_response)?;
+    Ok(json_response)
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct ParseResult {
+    pub project: Project,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct UpdateResult {
+    pub code: String,
+    pub project: Project,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-pub struct RPCResponse {
+pub struct RPCResponse<T> {
     pub jsonrpc: String,
     pub id: Option<String>,
     pub error: Option<RPCErrorCode>,
+    pub result: Option<T>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
