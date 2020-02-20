@@ -10,7 +10,6 @@ pub struct ParseResult {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct UpdateResult {
     pub code: String,
-    pub project: Project,
 }
 
 pub fn parse(host: &str, code: &str) -> Result<ParseResult, Box<dyn std::error::Error>> {

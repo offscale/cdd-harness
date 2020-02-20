@@ -38,8 +38,8 @@ pub fn main() {
         }],
     };
 
-    println!(
-        "--> {:?}",
-        methods::update("ws://127.0.0.1:7779", "", project)
-    );
+    let result = methods::update("ws://127.0.0.1:7779", "", project);
+
+    println!("--> {:?}", result);
+    println!("{:#}", result.unwrap().code);
 }
