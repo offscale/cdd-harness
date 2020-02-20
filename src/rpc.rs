@@ -1,7 +1,20 @@
+use cdd::*;
 use serde::{Deserialize, Serialize};
 
 pub fn parse(host: &str, code: &str) -> Result<RPCResponse, Box<dyn std::error::Error>> {
     rpc_request(host, "parse", serde_json::json!({ "code": code }))
+}
+
+pub fn update(
+    host: &str,
+    code: &str,
+    project: Project,
+) -> Result<RPCResponse, Box<dyn std::error::Error>> {
+    rpc_request(
+        host,
+        "update",
+        serde_json::json!({ "code": code, "project": project }),
+    )
 }
 
 /// Perform an RPC socket request

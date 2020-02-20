@@ -19,5 +19,16 @@ pub struct Error {
 "#;
 
 pub fn main() {
-    println!("--> {:?}", rpc::parse("ws://127.0.0.1:7779", CODE));
+    // println!("--> {:?}", rpc::parse("ws://127.0.0.1:7779", CODE));
+
+    let project = cdd::Project {
+        info: None,
+        models: vec![cdd::Model {
+            name: "Pet".into(),
+            vars: vec![],
+        }],
+        requests: vec![],
+    };
+
+    println!("--> {:?}", rpc::update("ws://127.0.0.1:7779", "", project));
 }
